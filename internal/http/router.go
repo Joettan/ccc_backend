@@ -7,5 +7,5 @@ func NewRouter() *gin.Engine {
 	r.Use(gin.Logger())
 	r.Use(gin.Recovery())
 
-	return rggo
+	return r
 }
