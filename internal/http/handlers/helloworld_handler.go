@@ -2,7 +2,6 @@ package handler
 
 import (
 	"ccc/internal/service"
-	"ccc/internal/service/demo"
 	"github.com/gin-gonic/gin"
 	"net/http"
 )
@@ -23,7 +22,7 @@ func (h *HelloWorldHandler) RegisterRoutes(group *gin.RouterGroup) {
 }
 
 func (h *HelloWorldHandler) HelloWorld(c *gin.Context) {
-	s := demo.NewHelloWorldService()
+	s := h.sFactory.HelloWorldService
 	result := s.HelloWorld(c, "test")
 	c.JSON(http.StatusOK, gin.H{"message": result})
 }
