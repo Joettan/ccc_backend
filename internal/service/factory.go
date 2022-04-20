@@ -1,11 +1,16 @@
 package service
 
+import "ccc/internal/service/demo"
+
 /**
 实现依赖注入的工厂类，配置相应service服务
 */
 type Factory struct {
+	HelloWorldService *demo.HelloWorldService
 }
 
 func NewFactory() *Factory {
-	return &Factory{}
+	return &Factory{
+		HelloWorldService: demo.NewHelloWorldService(),
+	}
 }
