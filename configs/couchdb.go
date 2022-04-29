@@ -14,9 +14,9 @@ func NewCouchDB() *Couchdb {
 }
 
 func (c *Couchdb) DB() *kivik.DB {
-	client, err := kivik.New("couch", "http://admin:1234@9.135.78.172:5984/")
+	client, err := kivik.New("couch", "http://admin:1234@116.62.214.19:5984")
 	if err != nil {
 	}
-	db := client.DB(context.TODO(), "helloworld")
+	db := client.DB(context.TODO(), "tweets")
 	return db
 }

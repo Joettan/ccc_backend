@@ -14,7 +14,7 @@ func initGin() *gin.Engine {
 	server.Use(gin.Logger())
 	server.Use(gin.Recovery())
 	factory := service.NewFactory()
-	v1Api := routers.NewAPI(handler.NewHelloWorldHandler(factory))
+	v1Api := routers.NewAPI(handler.NewHelloWorldHandler(factory), handler.NewSceneHandler(factory))
 	v1Api.RegisterRouter(server)
 	return server
 }
