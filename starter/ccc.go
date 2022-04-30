@@ -2,6 +2,7 @@ package main
 
 import (
 	handler "ccc/internal/http/handlers"
+	"ccc/internal/http/middleware"
 	"ccc/internal/http/routers"
 	"ccc/internal/service"
 	"github.com/gin-gonic/gin"
@@ -13,6 +14,7 @@ func initGin() *gin.Engine {
 	server := gin.New()
 	server.Use(gin.Logger())
 	server.Use(gin.Recovery())
+	server.Use(middleware.Cors())
 	factory := service.NewFactory()
 	v1Api := routers.NewAPI(handler.NewHelloWorldHandler(factory), handler.NewSceneHandler(factory))
 	v1Api.RegisterRouter(server)
