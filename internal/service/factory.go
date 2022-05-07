@@ -7,7 +7,7 @@ import "ccc/internal/service/demo"
 */
 type Factory struct {
 	HelloWorldService *demo.HelloWorldService
-	SportService      *SportService
+	SportService      *SceneService
 }
 
 func NewFactory() *Factory {

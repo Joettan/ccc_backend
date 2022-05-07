@@ -1,8 +1,10 @@
 package handler
 
 import (
+	"ccc/internal/model"
 	"ccc/internal/service"
 	"github.com/gin-gonic/gin"
+	"log"
 	"net/http"
 )
 
@@ -18,11 +20,17 @@ func NewSceneHandler(factory *service.Factory) *SceneHandler {
 }
 
 func (s *SceneHandler) RegisterRoutes(group *gin.RouterGroup) {
-	group.GET("sports", s.getSports)
+	group.GET("scene", s.getScene)
 }
 
-func (h *SceneHandler) getSports(c *gin.Context) {
+func (h *SceneHandler) getScene(c *gin.Context) {
 	s := h.sFactory.SportService
-	result := s.GetSports(c, "test")
+	var request model.SceneRequest
+	if err := c.ShouldBindJSON(&request); err != nil {
+		log.Default().Printf("Error Request %v", err.Error())
+		c.JSON(http.StatusBadRequest, gin.H{"data": "Error Request Wrong Value Type"})
+		return
+	}
+	result := s.GetMetrics(c, &request)
 	c.JSON(http.StatusOK, gin.H{"data": result})
 }
