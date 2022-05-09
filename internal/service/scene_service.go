@@ -40,13 +40,13 @@ func (h *SceneService) GetMetrics(ctx *gin.Context, r *model.SceneRequest) *mode
 	sceneSlice := make([]*model.SceneVO, 0, len(sports.Rows))
 	for i, row := range sports.Rows {
 		year, _ := strconv.Atoi(row.Key[0])
-		sportsVO := &model.SceneVO{
+		sceneVO := &model.SceneVO{
 			Id:       i,
 			Location: row.Key[1],
 			Scores:   row.Value,
 			Year:     year,
 		}
-		sceneSlice = append(sceneSlice, sportsVO)
+		sceneSlice = append(sceneSlice, sceneVO)
 	}
 	sportsSceneVO := model.SceneMetricsVO{
 		Metrics: sceneSlice,
