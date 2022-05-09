@@ -2,6 +2,7 @@ package service
 
 import (
 	"ccc/couchdb"
+	"ccc/global"
 	"ccc/internal/model"
 	"encoding/json"
 	"fmt"
@@ -19,10 +20,9 @@ func NewSportService() *SceneService {
 	return &SceneService{}
 }
 
-const db = "http://admin:1234@116.62.214.19:5984"
-
 func (h *SceneService) GetMetrics(ctx *gin.Context, r *model.SceneRequest) *model.SceneMetricsVO {
-	QueryString := couchdb.GetQueryString(db, r)
+	DBAddress := global.DBSetting.DBAddress
+	QueryString := couchdb.GetQueryString(DBAddress, r)
 	resp, error := http.Get(QueryString)
 	if error != nil {
 		fmt.Printf(error.Error())

@@ -1,16 +1,35 @@
 package main
 
 import (
+	"ccc/conf"
+	"ccc/global"
 	handler "ccc/internal/http/handlers"
 	"ccc/internal/http/middleware"
 	"ccc/internal/http/routers"
 	"ccc/internal/service"
 	"github.com/gin-gonic/gin"
+	"log"
 	"net/http"
 	"time"
 )
 
+func setupSetting() error {
+	setting, err := conf.NewSetting()
+	if err != nil {
+		return err
+	}
+	err = setting.ReadSection("DB", &global.DBSetting)
+	if err != nil {
+		return err
+	}
+	return nil
+}
+
 func initGin() *gin.Engine {
+	err := setupSetting()
+	for err != nil {
+		log.Fatalf("init.setupSetting err: %v", err)
+	}
 	server := gin.New()
 	server.Use(gin.Logger())
 	server.Use(gin.Recovery())
