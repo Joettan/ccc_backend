@@ -23,6 +23,7 @@ func NewSportService() *SceneService {
 func (h *SceneService) GetMetrics(ctx *gin.Context, r *model.SceneRequest) *model.SceneMetricsVO {
 	DBAddress := global.DBSetting.DBAddress
 	QueryString := couchdb.GetQueryString(DBAddress, r)
+	log.Default().Printf(QueryString)
 	resp, error := http.Get(QueryString)
 	if error != nil {
 		fmt.Printf(error.Error())

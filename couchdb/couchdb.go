@@ -18,6 +18,6 @@ func GetQueryString(db string, r *model.SceneRequest) string {
 		view = "_design/scene/_view/yearlocation"
 		yearCondition = fmt.Sprintf("&startkey=[\"%v\"]&endkey=[\"%v\"]", r.Year, r.Year+1)
 	}
-	q := fmt.Sprintf("%s/%s/%s?group=true%s", db, "tweets", view, yearCondition)
+	q := fmt.Sprintf("%s/%s/%s?group=true%s", db, r.Scene, view, yearCondition)
 	return q
 }
