@@ -31,21 +31,49 @@ func (h *SceneService) GetMetrics(ctx *gin.Context, r *model.SceneRequest) *mode
 	body, error := ioutil.ReadAll(resp.Body)
 	defer resp.Body.Close()
 	fmt.Print(string(body))
-	var sports model.SceneRowsBO
+	var sports model.SceneRowsDO
 	err := json.Unmarshal(body, &sports)
 	if err != nil {
 		log.Default().Printf("error unmarshal json: %v", err.Error())
 		return nil
 	}
 	sceneSlice := make([]*model.SceneVO, 0, len(sports.Rows))
-	for i, row := range sports.Rows {
+	sceneBOMap := make(map[string]*model.SceneBO, 0)
+	for _, row := range sports.Rows {
+		yearString := row.Key[0]
 		year, _ := strconv.Atoi(row.Key[0])
-		sceneVO := &model.SceneVO{
-			Id:       i,
-			Location: row.Key[1],
-			Scores:   row.Value,
-			Year:     year,
+		location := row.Key[1]
+		key := yearString + location
+		sceneBO, ok := sceneBOMap[key]
+		if !ok {
+			sceneBO = &model.SceneBO{
+				Location: location,
+				Year:     year,
+			}
+			sceneBOMap[key] = sceneBO
 		}
+		sentiment := row.Key[2]
+		switch sentiment {
+		case "neg":
+			sceneBO.NegativeScore = row.Value
+		case "neu":
+			sceneBO.NeutralScore = row.Value
+		case "pos":
+			sceneBO.PositiveScore = row.Value
+		}
+	}
+	var i = 0
+	for _, sceneBO := range sceneBOMap {
+		sceneVO := &model.SceneVO{
+			Year:          sceneBO.Year,
+			Location:      sceneBO.Location,
+			Id:            i,
+			NegativeScore: sceneBO.NegativeScore,
+			NeutralScore:  sceneBO.NeutralScore,
+			PositiveScore: sceneBO.PositiveScore,
+		}
+		i++
+		sceneVO.Scores = (4*sceneBO.PositiveScore + 2*sceneBO.NeutralScore - 4*sceneBO.NegativeScore) / 10
 		sceneSlice = append(sceneSlice, sceneVO)
 	}
 	sportsSceneVO := model.SceneMetricsVO{
