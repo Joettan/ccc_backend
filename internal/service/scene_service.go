@@ -43,16 +43,18 @@ func (h *SceneService) GetMetrics(ctx *gin.Context, r *model.SceneRequest) *mode
 		yearString := row.Key[0]
 		year, _ := strconv.Atoi(row.Key[0])
 		location := row.Key[1]
-		key := yearString + location
+		locationPid := row.Key[2]
+		key := yearString + location + locationPid
 		sceneBO, ok := sceneBOMap[key]
 		if !ok {
 			sceneBO = &model.SceneBO{
-				Location: location,
-				Year:     year,
+				Location:    location,
+				Year:        year,
+				LocationPid: locationPid,
 			}
 			sceneBOMap[key] = sceneBO
 		}
-		sentiment := row.Key[2]
+		sentiment := row.Key[3]
 		switch sentiment {
 		case "neg":
 			sceneBO.NegativeScore = row.Value
@@ -71,6 +73,7 @@ func (h *SceneService) GetMetrics(ctx *gin.Context, r *model.SceneRequest) *mode
 			NegativeScore: sceneBO.NegativeScore,
 			NeutralScore:  sceneBO.NeutralScore,
 			PositiveScore: sceneBO.PositiveScore,
+			LocationPid:   sceneBO.LocationPid,
 		}
 		i++
 		sceneVO.Scores = (4*sceneBO.PositiveScore + 2*sceneBO.NeutralScore - 4*sceneBO.NegativeScore) / 10

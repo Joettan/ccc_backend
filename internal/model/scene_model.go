@@ -19,6 +19,7 @@ type SceneVO struct {
 	NeutralScore  float64 `json:"neutralMetric"`
 	Id            int     `json:"id"`
 	Location      string  `json:"location"`
+	LocationPid   string  `json:"locationPid"`
 	Scores        float64 `json:"totalMetrics"`
 	Year          int     `json:"year,omitempty"`
 }
@@ -29,6 +30,7 @@ type SceneBO struct {
 	PositiveScore float64 `json:"positiveMetric"`
 	NeutralScore  float64 `json:"neutralMetric"`
 	Location      string  `json:"location"`
+	LocationPid   string  `json:"locationPid"`
 	Scores        float64 `json:"totalMetrics"`
 	Year          int     `json:"year,omitempty"`
 }
