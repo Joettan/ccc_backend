@@ -94,7 +94,7 @@ func (r *RegionService) GetFoods(locationPid string) interface{} {
 
 	if locationPid != "" {
 		filterResultSlice := make([]*model.FoodsVO, 0)
-		for _, vo := range filterResultSlice {
+		for _, vo := range resultSlice {
 			if vo.LocationPid == locationPid {
 				filterResultSlice = append(filterResultSlice, vo)
 			}
