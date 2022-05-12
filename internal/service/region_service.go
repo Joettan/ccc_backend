@@ -60,7 +60,7 @@ func (r *RegionService) GetWeatherLineData() interface{} {
 	view = "_design/weather/_view/humidity_avg"
 	humidQueryString := couchdb.GetQueryString(dBAddress, "pastweather", view)
 	log.Default().Printf(humidQueryString)
-	humidRowsDO := couchdb.GetRowsData(tempQueryString)
+	humidRowsDO := couchdb.GetRowsData(humidQueryString)
 	humidMetrics := make([]*model.WeatherMetricVO, 0, 1)
 	for _, row := range humidRowsDO.Rows {
 		var value float64
@@ -80,7 +80,7 @@ func (r *RegionService) GetWeatherLineData() interface{} {
 	view = "_design/weather/_view/wind_avg"
 	windQueryString := couchdb.GetQueryString(dBAddress, "pastweather", view)
 	log.Default().Printf(windQueryString)
-	windRowsDO := couchdb.GetRowsData(tempQueryString)
+	windRowsDO := couchdb.GetRowsData(windQueryString)
 	windMetrics := make([]*model.WeatherMetricVO, 0, 1)
 	for _, row := range windRowsDO.Rows {
 		var value float64
