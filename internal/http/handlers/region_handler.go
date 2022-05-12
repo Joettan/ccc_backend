@@ -28,7 +28,10 @@ func (h *RegionHandler) getWeatherData(c *gin.Context) {
 }
 
 func (h *RegionHandler) getSportsData(c *gin.Context) {
-	c.JSON(http.StatusOK, gin.H{"data": "Hello"})
+	r := h.sFactory.RegionService
+	location := c.Query("location")
+	result := r.GetSports(location)
+	c.JSON(http.StatusOK, gin.H{"data": result})
 }
 
 func (h *RegionHandler) getFoodsData(c *gin.Context) {

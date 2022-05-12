@@ -22,8 +22,47 @@ func (r *RegionService) GetWeatherData() {
 
 }
 
-func (r *RegionService) GetSports(locationPid string) {
+func (r *RegionService) GetSports(locationPid string) interface{} {
+	dBAddress := global.DBSetting.DBAddress
+	view := "_design/sports/_view/data"
+	sportsQueryString := couchdb.GetQueryString(dBAddress, "sports_played", view)
+	log.Default().Printf(sportsQueryString)
+	resp, error := http.Get(sportsQueryString)
+	if error != nil {
+		fmt.Printf(error.Error())
+	}
+	body, error := ioutil.ReadAll(resp.Body)
+	if error != nil {
+		fmt.Printf(error.Error())
+	}
+	defer resp.Body.Close()
+	var regionRowsDO model.RegionRowsDO
+	error = json.Unmarshal(body, &regionRowsDO)
+	if error != nil {
+		log.Default().Printf("error unmarshal json: %v", error.Error())
+		return nil
+	}
+	resultSlice := make([]*model.SportsVO, 0, 1)
+	for _, row := range regionRowsDO.Rows {
+		value := row.Value
+		location := row.Key[0]
+		vo := &model.SportsVO{
+			SportsNumber: value.Max,
+			LocationPid:  location,
+		}
+		resultSlice = append(resultSlice, vo)
+	}
+	if locationPid != "" {
+		filterResultSlice := make([]*model.SportsVO, 0)
+		for _, vo := range resultSlice {
+			if vo.LocationPid == locationPid {
+				filterResultSlice = append(filterResultSlice, vo)
+			}
+		}
+		return filterResultSlice
+	}
 
+	return resultSlice
 }
 
 func (r *RegionService) GetFoods(locationPid string) interface{} {
@@ -38,9 +77,9 @@ func (r *RegionService) GetFoods(locationPid string) interface{} {
 	body, error := ioutil.ReadAll(resp.Body)
 	defer resp.Body.Close()
 	var regionRowsDO model.RegionRowsDO
-	err := json.Unmarshal(body, &regionRowsDO)
-	if err != nil {
-		log.Default().Printf("error unmarshal json: %v", err.Error())
+	error = json.Unmarshal(body, &regionRowsDO)
+	if error != nil {
+		log.Default().Printf("error unmarshal json: %v", error.Error())
 		return nil
 	}
 	resultMap := make(map[string]*model.FoodsVO, 0)
@@ -63,9 +102,9 @@ func (r *RegionService) GetFoods(locationPid string) interface{} {
 	bodyV2, error := ioutil.ReadAll(respV2.Body)
 	defer respV2.Body.Close()
 	var regionRowsDOV2 model.RegionRowsDO
-	err = json.Unmarshal(bodyV2, &regionRowsDOV2)
-	if err != nil {
-		log.Default().Printf("error unmarshal json: %v", err.Error())
+	error = json.Unmarshal(bodyV2, &regionRowsDOV2)
+	if error != nil {
+		log.Default().Printf("error unmarshal json: %v", error.Error())
 		return nil
 	}
 	for _, row := range regionRowsDOV2.Rows {

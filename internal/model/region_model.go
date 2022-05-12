@@ -18,10 +18,8 @@ type Value struct {
 }
 
 type SportsVO struct {
-	BarsNumber  float64 `json:"barsNumber"`
-	CafesNUmber float64 `json:"cafesNUmber""`
-	Ratio       float64 `json:"ratio"`
-	LocationPid float64 `json:"locationPid"`
+	SportsNumber float64 `json:"sportsNumber"`
+	LocationPid  string  `json:"locationPid"`
 }
 
 type FoodsVO struct {
