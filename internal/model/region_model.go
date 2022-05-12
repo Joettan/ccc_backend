@@ -28,3 +28,16 @@ type FoodsVO struct {
 	Ratio       float64 `json:"ratio"`
 	LocationPid string  `json:"locationPid"`
 }
+
+type WeathersVO struct {
+	UVMetrics    []*WeatherMetricVO `json:"UVmetrics"`
+	TempMetrics  []*WeatherMetricVO `json:"Tempmetrics"`
+	WindMetrics  []*WeatherMetricVO `json:"WindMetrics"`
+	HumidMetrics []*WeatherMetricVO `json:"HumidMetrics"`
+}
+
+type WeatherMetricVO struct {
+	Year   string  `json:"year"`
+	Month  string  `json:"month"`
+	Metric float64 `json:"metric"`
+}

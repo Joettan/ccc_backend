@@ -18,13 +18,15 @@ func NewRegionHandler(factory *service.Factory) *RegionHandler {
 }
 
 func (h *RegionHandler) RegisterRoutes(group *gin.RouterGroup) {
-	group.GET("weather", h.getWeatherData)
+	group.GET("weather", h.getWeatherLineData)
 	group.GET("sports", h.getSportsData)
 	group.GET("foods", h.getFoodsData)
 }
 
-func (h *RegionHandler) getWeatherData(c *gin.Context) {
-	c.JSON(http.StatusOK, gin.H{"data": "Hello"})
+func (h *RegionHandler) getWeatherLineData(c *gin.Context) {
+	r := h.sFactory.RegionService
+	result := r.GetWeatherLineData()
+	c.JSON(http.StatusOK, gin.H{"data": result})
 }
 
 func (h *RegionHandler) getSportsData(c *gin.Context) {

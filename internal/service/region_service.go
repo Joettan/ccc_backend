@@ -4,11 +4,8 @@ import (
 	"ccc/couchdb"
 	"ccc/global"
 	"ccc/internal/model"
-	"encoding/json"
-	"fmt"
-	"io/ioutil"
 	"log"
-	"net/http"
+	"math"
 )
 
 type RegionService struct {
@@ -18,8 +15,95 @@ func NewRegionService() *RegionService {
 	return &RegionService{}
 }
 
-func (r *RegionService) GetWeatherData() {
-
+func (r *RegionService) GetWeatherLineData() interface{} {
+	dBAddress := global.DBSetting.DBAddress
+	view := "_design/weather/_view/uv_max"
+	uvQueryString := couchdb.GetQueryString(dBAddress, "pastweather", view)
+	log.Default().Printf(uvQueryString)
+	uvRowsDO := couchdb.GetRowsData(uvQueryString)
+	uvMetrics := make([]*model.WeatherMetricVO, 0, 1)
+	for _, row := range uvRowsDO.Rows {
+		var value float64
+		if row.Value.Count > 0 {
+			value = row.Value.Sum / row.Value.Count
+		}
+		value = math.Round(value*100) / 100
+		year := row.Key[0]
+		month := row.Key[1]
+		metricVO := &model.WeatherMetricVO{
+			Year:   year,
+			Month:  month,
+			Metric: value,
+		}
+		uvMetrics = append(uvMetrics, metricVO)
+	}
+	view = "_design/weather/_view/temperature_avg"
+	tempQueryString := couchdb.GetQueryString(dBAddress, "pastweather", view)
+	log.Default().Printf(uvQueryString)
+	tempRowsDO := couchdb.GetRowsData(tempQueryString)
+	tempMetrics := make([]*model.WeatherMetricVO, 0, 1)
+	for _, row := range tempRowsDO.Rows {
+		var value float64
+		if row.Value.Count > 0 {
+			value = row.Value.Sum / row.Value.Count
+		}
+		value = math.Round(value*100) / 100
+		year := row.Key[0]
+		month := row.Key[1]
+		metricVO := &model.WeatherMetricVO{
+			Year:   year,
+			Month:  month,
+			Metric: value,
+		}
+		tempMetrics = append(tempMetrics, metricVO)
+	}
+	view = "_design/weather/_view/humidity_avg"
+	humidQueryString := couchdb.GetQueryString(dBAddress, "pastweather", view)
+	log.Default().Printf(humidQueryString)
+	humidRowsDO := couchdb.GetRowsData(tempQueryString)
+	humidMetrics := make([]*model.WeatherMetricVO, 0, 1)
+	for _, row := range humidRowsDO.Rows {
+		var value float64
+		if row.Value.Count > 0 {
+			value = row.Value.Sum / row.Value.Count
+		}
+		value = math.Round(value*100) / 100
+		year := row.Key[0]
+		month := row.Key[1]
+		metricVO := &model.WeatherMetricVO{
+			Year:   year,
+			Month:  month,
+			Metric: value,
+		}
+		humidMetrics = append(humidMetrics, metricVO)
+	}
+	view = "_design/weather/_view/wind_avg"
+	windQueryString := couchdb.GetQueryString(dBAddress, "pastweather", view)
+	log.Default().Printf(windQueryString)
+	windRowsDO := couchdb.GetRowsData(tempQueryString)
+	windMetrics := make([]*model.WeatherMetricVO, 0, 1)
+	for _, row := range windRowsDO.Rows {
+		var value float64
+		if row.Value.Count > 0 {
+			value = row.Value.Sum / row.Value.Count
+		}
+		value = math.Round(value*100) / 100
+		year := row.Key[0]
+		month := row.Key[1]
+		metricVO := &model.WeatherMetricVO{
+			Year:   year,
+			Month:  month,
+			Metric: value,
+		}
+		windMetrics = append(windMetrics, metricVO)
+	}
+	result := &model.WeathersVO{
+		UVMetrics:    uvMetrics,
+		TempMetrics:  tempMetrics,
+		HumidMetrics: humidMetrics,
+		WindMetrics:  windMetrics,
+	}
+	return result
 }
 
 func (r *RegionService) GetSports(locationPid string) interface{} {
@@ -27,21 +111,7 @@ func (r *RegionService) GetSports(locationPid string) interface{} {
 	view := "_design/sports/_view/data"
 	sportsQueryString := couchdb.GetQueryString(dBAddress, "sports_played", view)
 	log.Default().Printf(sportsQueryString)
-	resp, error := http.Get(sportsQueryString)
-	if error != nil {
-		fmt.Printf(error.Error())
-	}
-	body, error := ioutil.ReadAll(resp.Body)
-	if error != nil {
-		fmt.Printf(error.Error())
-	}
-	defer resp.Body.Close()
-	var regionRowsDO model.RegionRowsDO
-	error = json.Unmarshal(body, &regionRowsDO)
-	if error != nil {
-		log.Default().Printf("error unmarshal json: %v", error.Error())
-		return nil
-	}
+	regionRowsDO := couchdb.GetRowsData(sportsQueryString)
 	resultSlice := make([]*model.SportsVO, 0, 1)
 	for _, row := range regionRowsDO.Rows {
 		value := row.Value
@@ -70,18 +140,7 @@ func (r *RegionService) GetFoods(locationPid string) interface{} {
 	view := "_design/bars/_view/data"
 	barQueryString := couchdb.GetQueryString(dBAddress, "aurin-bars", view)
 	log.Default().Printf(barQueryString)
-	resp, error := http.Get(barQueryString)
-	if error != nil {
-		fmt.Printf(error.Error())
-	}
-	body, error := ioutil.ReadAll(resp.Body)
-	defer resp.Body.Close()
-	var regionRowsDO model.RegionRowsDO
-	error = json.Unmarshal(body, &regionRowsDO)
-	if error != nil {
-		log.Default().Printf("error unmarshal json: %v", error.Error())
-		return nil
-	}
+	regionRowsDO := couchdb.GetRowsData(barQueryString)
 	resultMap := make(map[string]*model.FoodsVO, 0)
 	for _, row := range regionRowsDO.Rows {
 		value := row.Value
@@ -95,18 +154,7 @@ func (r *RegionService) GetFoods(locationPid string) interface{} {
 	view = "_design/cafes/_view/data"
 	cafeQueryString := couchdb.GetQueryString(dBAddress, "aurin-cafes", view)
 	log.Default().Printf(cafeQueryString)
-	respV2, error := http.Get(cafeQueryString)
-	if error != nil {
-		fmt.Printf(error.Error())
-	}
-	bodyV2, error := ioutil.ReadAll(respV2.Body)
-	defer respV2.Body.Close()
-	var regionRowsDOV2 model.RegionRowsDO
-	error = json.Unmarshal(bodyV2, &regionRowsDOV2)
-	if error != nil {
-		log.Default().Printf("error unmarshal json: %v", error.Error())
-		return nil
-	}
+	regionRowsDOV2 := couchdb.GetRowsData(cafeQueryString)
 	for _, row := range regionRowsDOV2.Rows {
 		value := row.Value
 		location := row.Key[0]
