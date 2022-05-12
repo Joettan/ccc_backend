@@ -8,11 +8,13 @@ import "ccc/internal/service/demo"
 type Factory struct {
 	HelloWorldService *demo.HelloWorldService
 	SportService      *SceneService
+	RegionService     *RegionService
 }
 
 func NewFactory() *Factory {
 	return &Factory{
 		HelloWorldService: demo.NewHelloWorldService(),
 		SportService:      NewSportService(),
+		RegionService:     NewRegionService(),
 	}
 }

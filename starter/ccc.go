@@ -35,7 +35,7 @@ func initGin() *gin.Engine {
 	server.Use(gin.Recovery())
 	server.Use(middleware.Cors())
 	factory := service.NewFactory()
-	v1Api := routers.NewAPI(handler.NewHelloWorldHandler(factory), handler.NewSceneHandler(factory))
+	v1Api := routers.NewAPI(handler.NewHelloWorldHandler(factory), handler.NewSceneHandler(factory), handler.NewRegionHandler(factory))
 	v1Api.RegisterRouter(server)
 	return server
 }

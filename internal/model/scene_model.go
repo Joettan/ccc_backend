@@ -19,23 +19,21 @@ type SceneVO struct {
 	NeutralScore  float64 `json:"neutralMetric"`
 	Id            int     `json:"id"`
 	Location      string  `json:"location"`
-	LocationPid   string  `json:"locationPid"`
-	Scores        float64 `json:"totalMetrics"`
-	Year          int     `json:"year,omitempty"`
+	//LocationPid   string  `json:"locationPid"`
+	Scores  float64    `json:"totalMetrics"`
+	Suburbs []*SceneVO `json:"suburbs,omitempty"`
 }
 
 type SceneBO struct {
-	sentiment     string  `json:"sentiment"`
-	NegativeScore float64 `json:"negativeMetric"`
-	PositiveScore float64 `json:"positiveMetric"`
-	NeutralScore  float64 `json:"neutralMetric"`
-	Location      string  `json:"location"`
-	LocationPid   string  `json:"locationPid"`
-	Scores        float64 `json:"totalMetrics"`
-	Year          int     `json:"year,omitempty"`
+	NegativeScore float64    `json:"negativeMetric"`
+	PositiveScore float64    `json:"positiveMetric"`
+	NeutralScore  float64    `json:"neutralMetric"`
+	Location      string     `json:"location"`
+	LocationPid   string     `json:"locationPid"`
+	Scores        float64    `json:"totalMetrics"`
+	Suburbs       []*SceneBO `json:"suburbs,omitempty"`
 }
 
 type SceneRequest struct {
 	Scene string `json:"topic"`
-	Year  int    `json:"year"`
 }
