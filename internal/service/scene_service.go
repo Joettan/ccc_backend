@@ -132,6 +132,23 @@ func (h *SceneService) GetMetrics(ctx *gin.Context, r *model.SceneRequest) *mode
 		i++
 	}
 
+	for _, cityName := range global.CityConfig {
+		_, ok := sceneBOMap[cityName]
+		if !ok {
+			vo := &model.SceneVO{
+				NegativeScore: 0,
+				PositiveScore: 0,
+				NeutralScore:  0,
+				Id:            i,
+				Location:      cityName,
+				//LocationPid   : bo.LocationPid,
+				Scores: 0,
+			}
+			i++
+			sceneVOSlice = append(sceneVOSlice, vo)
+		}
+	}
+
 	result := &model.SceneMetricsVO{
 		//Metrics: sceneVOSlice,
 		Metrics: sceneVOSlice,

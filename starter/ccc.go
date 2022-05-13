@@ -7,9 +7,11 @@ import (
 	"ccc/internal/http/middleware"
 	"ccc/internal/http/routers"
 	"ccc/internal/service"
+	"encoding/json"
 	"github.com/gin-gonic/gin"
 	"log"
 	"net/http"
+	"os"
 	"time"
 )
 
@@ -26,6 +28,7 @@ func setupSetting() error {
 }
 
 func initGin() *gin.Engine {
+	global.CityConfig = ReadCityConfig()
 	err := setupSetting()
 	for err != nil {
 		log.Fatalf("init.setupSetting err: %v", err)
@@ -38,6 +41,21 @@ func initGin() *gin.Engine {
 	v1Api := routers.NewAPI(handler.NewHelloWorldHandler(factory), handler.NewSceneHandler(factory), handler.NewRegionHandler(factory))
 	v1Api.RegisterRouter(server)
 	return server
+}
+
+func ReadCityConfig() []string {
+	var cityDO global.CityDO
+	filePtr, err := os.Open("./conf/city_name.json")
+	if err != nil {
+		log.Default().Printf("can't read city_name.json")
+	}
+	defer filePtr.Close()
+	decoder := json.NewDecoder(filePtr)
+	err = decoder.Decode(&cityDO)
+	if err != nil {
+		log.Default().Printf("can't decode city_name.json")
+	}
+	return cityDO.City
 }
 
 func main() {
