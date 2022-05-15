@@ -19,6 +19,6 @@ func NewHelloWorldService() *HelloWorldService {
 }
 
 func (h *HelloWorldService) HelloWorld(ctx *gin.Context, s string) string {
-	r := fmt.Sprintf("This is a fucking ccc service %s", s)
+	r := fmt.Sprintf("This is a HelloWolrd %s", s)
 	return r
 }
