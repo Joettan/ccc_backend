@@ -41,3 +41,8 @@ type WeatherMetricVO struct {
 	Month  string  `json:"month"`
 	Metric float64 `json:"metric"`
 }
+
+type MetricVO struct {
+	Year   string  `json:"year"`
+	Metric float64 `json:metric`
+}

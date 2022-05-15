@@ -4,6 +4,7 @@ import (
 	"ccc/couchdb"
 	"ccc/global"
 	"ccc/internal/model"
+	"fmt"
 	"log"
 	"math"
 )
@@ -104,6 +105,27 @@ func (r *RegionService) GetWeatherLineData() interface{} {
 		WindMetrics:  windMetrics,
 	}
 	return result
+}
+
+func (r *RegionService) GetLineData(db string) interface{} {
+	dBAddress := global.DBSetting.DBAddress
+	view := fmt.Sprintf("_design/%s/_view/linedata", db)
+	sportsString := couchdb.GetQueryString(dBAddress, db, view)
+	log.Default().Printf(sportsString)
+	sportsRowsDO := couchdb.GetSceneRowsData(sportsString)
+	metrics := make([]*model.MetricVO, 0, 1)
+	for _, row := range sportsRowsDO.Rows {
+		var value float64
+		value = row.Value
+		value = math.Round(value*100) / 100
+		year := row.Key[0]
+		vo := &model.MetricVO{
+			Year:   year,
+			Metric: value,
+		}
+		metrics = append(metrics, vo)
+	}
+	return metrics
 }
 
 func (r *RegionService) GetSports(locationPid string) interface{} {

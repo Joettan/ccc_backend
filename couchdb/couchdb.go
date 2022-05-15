@@ -32,3 +32,19 @@ func GetRowsData(queryString string) *model.RegionRowsDO {
 	}
 	return regionRowsDO
 }
+
+func GetSceneRowsData(queryString string) *model.SceneRowsDO {
+	resp, error := http.Get(queryString)
+	if error != nil {
+		fmt.Printf(error.Error())
+	}
+	body, error := ioutil.ReadAll(resp.Body)
+	defer resp.Body.Close()
+	var regionRowsDO *model.SceneRowsDO
+	error = json.Unmarshal(body, &regionRowsDO)
+	if error != nil {
+		log.Default().Printf("error unmarshal json: %v", error.Error())
+		return nil
+	}
+	return regionRowsDO
+}
