@@ -8,7 +8,6 @@ import (
 	"ccc/internal/http/routers"
 	"ccc/internal/service"
 	"encoding/json"
-	"fmt"
 	"github.com/bitly/go-simplejson"
 	"github.com/gin-gonic/gin"
 	"log"
@@ -32,8 +31,6 @@ func setupSetting() error {
 
 func initGin() *gin.Engine {
 	global.CitySuburb = ReadCitySuburbConfig()
-	s := global.CitySuburb.Get("452")
-	fmt.Println(s)
 	global.CityConfig = ReadCityConfig()
 	err := setupSetting()
 	for err != nil {
