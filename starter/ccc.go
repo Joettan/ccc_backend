@@ -8,9 +8,12 @@ import (
 	"ccc/internal/http/routers"
 	"ccc/internal/service"
 	"encoding/json"
+	"fmt"
+	"github.com/bitly/go-simplejson"
 	"github.com/gin-gonic/gin"
 	"log"
 	"net/http"
+	_ "net/http/pprof"
 	"os"
 	"time"
 )
@@ -28,6 +31,9 @@ func setupSetting() error {
 }
 
 func initGin() *gin.Engine {
+	global.CitySuburb = ReadCitySuburbConfig()
+	s := global.CitySuburb.Get("452")
+	fmt.Println(s)
 	global.CityConfig = ReadCityConfig()
 	err := setupSetting()
 	for err != nil {
@@ -58,8 +64,25 @@ func ReadCityConfig() []string {
 	return cityDO.City
 }
 
+func ReadCitySuburbConfig() *simplejson.Json {
+	var suburbJson *simplejson.Json
+	filePtr, err := os.Open("./conf/city_suburb_map.json")
+	if err != nil {
+		log.Default().Printf("can't read city_suburb_map.json")
+	}
+	defer filePtr.Close()
+	suburbJson, err = simplejson.NewFromReader(filePtr)
+	if err != nil {
+		log.Default().Printf("can't read city_suburb_map.json")
+	}
+	return suburbJson
+}
+
 func main() {
 	server := initGin()
+	go func() {
+		_ = http.ListenAndServe("0.0.0.0:8000", nil)
+	}()
 	s := &http.Server{
 		Addr:           ":8080",
 		Handler:        server,

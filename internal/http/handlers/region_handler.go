@@ -1,6 +1,7 @@
 package handler
 
 import (
+	"ccc/global"
 	"ccc/internal/service"
 	"github.com/gin-gonic/gin"
 	"net/http"
@@ -22,6 +23,7 @@ func (h *RegionHandler) RegisterRoutes(group *gin.RouterGroup) {
 	group.GET("sports", h.getSportsData)
 	group.GET("foods", h.getFoodsData)
 	group.GET("LineData", h.getLineData)
+	group.GET("citySuburb", h.getCitySuburb)
 }
 
 func (h *RegionHandler) getWeatherLineData(c *gin.Context) {
@@ -48,5 +50,11 @@ func (h *RegionHandler) getFoodsData(c *gin.Context) {
 	r := h.sFactory.RegionService
 	location := c.Query("location")
 	result := r.GetFoods(location)
+	c.JSON(http.StatusOK, gin.H{"data": result})
+}
+
+func (h *RegionHandler) getCitySuburb(c *gin.Context) {
+	vid := c.Query("vid")
+	result := global.CitySuburb.Get(vid)
 	c.JSON(http.StatusOK, gin.H{"data": result})
 }
